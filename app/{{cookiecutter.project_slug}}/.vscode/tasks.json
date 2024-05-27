@@ -1,0 +1,60 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "docker-build",
+      "label": "docker-build",
+      "platform": "python",
+      "dockerBuild": {
+        "tag": "{{cookiecutter.project_slug}}:latest",
+        "dockerfile": "${workspaceFolder}/Dockerfile",
+        "context": "${workspaceFolder}",
+        "pull": true
+      }
+    },
+    {
+      "type": "docker-run",
+      "label": "docker-run: debug",
+      "dependsOn": ["docker-build"],
+      "dockerRun": {
+        "ports": [
+          {
+            "hostPort": 8000,
+            "containerPort": 8000
+          }
+        ],
+        // To allow communication between docker-compose services,
+        // consider adding the network created by docker-compose
+        // "network": "<network-name>",
+        "env": {
+          "GOOGLE_APPLICATION_CREDENTIALS": "/gcp/application_default_credentials.json",
+          "GCLOUD_PROJECT": "{{cookiecutter.gcloud_project}}"
+        },
+        "volumes": [
+          {
+            "localPath": "/home/augustin/.config/gcloud",
+            "containerPath": "/gcp",
+            "permissions": "ro"
+          },
+          {
+            "localPath": "${workspaceFolder}",
+            "containerPath": "/code",
+            "permissions": "rw"
+          }
+        ],
+        "image": "{{cookiecutter.project_slug}}:latest"
+      },
+      "python": {
+        "args": [
+          "app.main:app",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8000",
+          "--reload"
+        ],
+        "module": "uvicorn"
+      }
+    }
+  ]
+}

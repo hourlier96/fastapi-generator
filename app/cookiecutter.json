@@ -1,0 +1,36 @@
+{
+  "repository_name": "",
+  "project_name": "FastApi template",
+  "project_slug": "{{cookiecutter.project_name.lower().replace(' ', '_')}}",
+  "description": "My project description",
+  "maintainer": [
+    "Digital Lab <fr.dgc.ops.dgtl@devoteamgcloud.com>",
+    "Augustin Hourlier <augustin.hourlier@devoteamgcloud.com>",
+    "Benjamin Solano <benjamin.solano@devoteamgcloud.com>",
+    "Etienne Baumgartner <etienne.baumgartner@devoteamgcloud.com>",
+    "Eudes Grange <eudes.grange@devoteamgcloud.com>",
+    "Jenny Nguyen <jenny.nguyen@devoteamgcloud.com>",
+    "Jian Lin <jian.lin@devoteamgcloud.com>",
+    "Meryem El Halfa <meryem.el.halfa@devoteamgcloud.com",
+    "Nassim Mesdour <nassim.mesdour@devoteamgcloud.com>",
+    "Raphaël Obadia <raphael.obadia@devoteamgcloud.com>",
+    "Sébastien Viguier <sebastien.viguier@devoteamgcloud.com>",
+    "Stephane Conq <stephane.conq@devoteamgcloud.com>",
+    "Valdo Negou <valdo.negou@devoteamgcloud.com>"
+  ],
+  "database": ["PostgreSQL", "Firestore", "Both"],
+  "as_container": true,
+  "gcloud_project": "<GCP_PROJECT_ID>",
+  "gcloud_region": ["europe-west9"],
+  "__prompts__": {
+    "repository_name": "Empty repository name you want to push to (let empty to refuse or use format <github_username>/<repo_name>):",
+    "project_name": "Select your project name:",
+    "project_slug": "Select your project slug:",
+    "description": "Add a description to the ReadMe:",
+    "maintainer": "Select the main maintainer of the project:",
+    "database": "Select the type of database you need:",
+    "as_container": "Use Docker configuration (Local containers & Cloud Run auto-deploy) ?",
+    "gcloud_project": "GCP Project ID targeted by deployment?",
+    "gcloud_region": "In which region will resources be deployed?"
+  }
+}

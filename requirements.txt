@@ -1,0 +1,3 @@
+cookiecutter
+GitPython
+python-dotenv
