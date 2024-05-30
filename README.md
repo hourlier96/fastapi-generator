@@ -85,7 +85,3 @@ act -j test-run-template --rm -W .github/workflows/template-generation.yaml
 Deployment:
 
 - Add a specific database user and not postgres
-
-Backend:
-
-- Optimize unit tests (bad scope fixture)

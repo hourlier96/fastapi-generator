@@ -20,6 +20,8 @@ def build_todo_in() -> TodoCreate:
 
 
 async def create_random_todo(db: AsyncSession) -> TodoRead:
-    report_in = build_todo_in()
-    report = await crud_todo.create(db=db, obj_in=report_in)
-    return TodoRead.model_validate(report)
+    todo_in = build_todo_in()
+    todo = await crud_todo.create(db=db, obj_in=todo_in, commit=False)
+    await db.flush()
+    await db.refresh(todo)
+    return TodoRead.model_validate(todo)

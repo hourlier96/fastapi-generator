@@ -20,9 +20,13 @@ def build_random_user_in() -> UserCreate:
     return user_in
 
 
-async def create_random_user(db: AsyncSession) -> UserRead:
+async def create_random_user(
+    db: AsyncSession,
+) -> UserRead:
     user_in = build_random_user_in()
-    user = await crud_user.create(db=db, obj_in=user_in)
+    user = await crud_user.create(db=db, obj_in=user_in, commit=False)
+    await db.flush()
+    await db.refresh(user)
     return UserRead.model_validate(user)
 
 
@@ -51,7 +55,9 @@ async def create_user(
     login_times: int | None,
 ) -> UserRead:
     user_in = build_user_in(first_name, last_name, email, is_admin, login_times)
-    user = await crud_user.create(db=db, obj_in=user_in)
+    user = await crud_user.create(db=db, obj_in=user_in, commit=False)
     if not user:
         raise Exception("Failed to create test user")
+    await db.flush()
+    await db.refresh(user)
     return UserRead.model_validate(user)

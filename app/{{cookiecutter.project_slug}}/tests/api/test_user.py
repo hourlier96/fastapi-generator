@@ -19,20 +19,18 @@ async def test_get_user(client: AsyncClient, db: AsyncSession) -> None:
 
 
 async def test_get_users(client: AsyncClient, db: AsyncSession) -> None:
-    users = [
-        await create_random_user(db),
-        await create_random_user(db),
-        await create_random_user(db),
-    ]
+    await create_random_user(db)
+    await create_random_user(db)
+    await create_random_user(db)
     response = await client.get(
         f"{DATASOURCES_URL}",
     )
     assert response.status_code == 200
 
     content = response.json()
-    assert content.get("total") == len(users)
+    assert content.get("total") == 3
     items = content.get("items")
-    assert len(items) == len(users)
+    assert len(items) == 3
 
 
 async def test_create_user(client: AsyncClient, db: AsyncSession) -> None:

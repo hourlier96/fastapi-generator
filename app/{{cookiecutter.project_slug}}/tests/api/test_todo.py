@@ -4,7 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
 from tests.utils.todo import build_todo_in, create_random_todo
-from tests.utils.user import create_random_user
 
 DATASOURCES_URL = f"{settings.API_PREFIX}/todo"
 
@@ -16,10 +15,12 @@ async def test_get_todo(client: AsyncClient, db: AsyncSession) -> None:
     )
     assert response.status_code == 200
     content = response.json()
-    assert content.get("id") == 1
+    assert content.get("id") is not None
 
 
 async def test_get_todos(client: AsyncClient, db: AsyncSession) -> None:
+    await create_random_todo(db)
+    await create_random_todo(db)
     await create_random_todo(db)
     response = await client.get(
         f"{DATASOURCES_URL}",
@@ -27,15 +28,13 @@ async def test_get_todos(client: AsyncClient, db: AsyncSession) -> None:
     assert response.status_code == 200
 
     content = response.json()
-    assert content.get("total") == 1
+    assert content.get("total") == 3
     items = content.get("items")
-    assert len(items) == 1
-    assert items[0].get("id") == 1
+    assert len(items) == 3
+    assert items[0].get("id") is not None
 
 
 async def test_create_todo(client: AsyncClient, db: AsyncSession) -> None:
-    await create_random_user(db)
-    await create_random_user(db)
     todo = build_todo_in()
     response = await client.post(
         DATASOURCES_URL,

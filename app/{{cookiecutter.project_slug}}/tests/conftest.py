@@ -2,7 +2,6 @@ from contextlib import ExitStack
 
 import httpx
 import pytest
-
 from app.main import app as actual_app
 from app.sqlmodel import SQLModel
 from app.sqlmodel.db import DatabaseAsyncSessionManager, get_db_session
@@ -30,7 +29,7 @@ def session_manager(request):
     return DatabaseAsyncSessionManager(get_sqlalchemy_database_uri(request.config))
 
 
-@pytest.fixture(scope="function", autouse=True)
+@pytest.fixture(scope="session", autouse=True)
 async def setup_database(session_manager: DatabaseAsyncSessionManager):
     async with session_manager._engine.begin() as conn:
         await conn.run_sync(SQLModel.metadata.drop_all)
@@ -46,8 +45,8 @@ async def client():
 @pytest.fixture(scope="function", autouse=True)
 async def transactional_session(session_manager: DatabaseAsyncSessionManager):
     async with session_manager.session() as session:
+        await session.begin()
         try:
-            await session.begin()
             yield session
         finally:
             await session.rollback()  # Rolls back the outer transaction
