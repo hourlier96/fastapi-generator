@@ -76,6 +76,7 @@ The main.tf will deploy:
 - Image into the Artifact Registry used by Cloud Run
 - Cloud Run service
 - Secret in Secret Manager
+- Cloud Build Trigger linked to the repository specified
 
 Additionally, it will deploy a Cloud SQL and/or Firestore database according to you database choice.
 You may need additional IAM roles to deploy databases
@@ -88,6 +89,13 @@ terraform init
 terraform apply
 
 ```
+
+Once deployment is done:
+
+- [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
+- [Add .env content into secret version](https://console.cloud.google.com/security/secret-manager/secret/{{cookiecutter.project_slug.replace('_','-')}}/versions?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
+
+Cloud Build is now ready to deploy new Cloud Run revision after each push
 
 ### Migrations (Postgres only)
 
@@ -109,7 +117,7 @@ This will run linting for every Pull Request on develop, uat and main branches
 
 - From the trigger created by Terraform, give Github repository access to Cloud Build
 
-- Copy .env into the secret '{{ cookiecutter.project_slug.replace('_', '-') }}'' to ensure Cloud Build will have the correct environement.
+- Copy .env into the secret '{{ cookiecutter.project_slug.replace('_', '-') }}' to ensure Cloud Build will have the correct environement.
 
 - Roles:
   - Cloud Build Service Account has Cloud Run Admin role

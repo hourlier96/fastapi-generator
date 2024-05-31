@@ -37,7 +37,7 @@ resource "google_sql_database_instance" "instance" {
     tier = "db-f1-micro"
   }
 
-  deletion_protection = "true"
+  deletion_protection = "false"
 }
 resource "google_sql_database" "database" {
   count    = var.database_choosed.sql ? 1 : 0
@@ -85,7 +85,7 @@ resource "google_artifact_registry_repository" "cookiecutter-repo" {
 resource "null_resource" "build_push_image" {
   provisioner "local-exec" {
     command = <<-EOT
-      gcloud auth configure-docker
+      gcloud auth configure-docker europe-docker.pkg.dev
       docker build --platform linux/amd64 -t "europe-docker.pkg.dev/{{ cookiecutter.gcloud_project }}/{{ cookiecutter.project_slug.replace('_', '-') }}-repository/{{ cookiecutter.project_slug.replace('_', '-') }}" -f Dockerfile.prod .
       docker push "europe-docker.pkg.dev/{{ cookiecutter.gcloud_project }}/{{ cookiecutter.project_slug.replace('_', '-') }}-repository/{{ cookiecutter.project_slug.replace('_', '-') }}"
     EOT
