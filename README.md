@@ -23,22 +23,12 @@ It assumes the template is pushed on a separate Github repository
   python3 -m pip install -r requirements.txt
   ```
 
-- Copy .env in "app/{{cookiecutter.project_slug}}" folder
+- (Optional): Add a github access token to .env file if you want the branch protection to be automated at generation
 
-  Do not modify 'cookiecutter.key' values (replaced at generation)
-
-  ```bash
-    ENV="local"
-    GCLOUD_PROJECT_ID="{{cookiecutter.gcloud_project}}"
-    # (Optional): Used to set branch protection
-    GITHUB_ACCESS_TOKEN="<PERSONAL_ACCESS_TOKEN>"
-    SQLALCHEMY_DATABASE_URI="postgresql+asyncpg://postgres:postgres@localhost:5434/{{cookiecutter.project_slug}}_db"
-
-    # For deployed version
-    ENV="dev"
-    GCLOUD_PROJECT_ID="{{cookiecutter.gcloud_project}}"
-    SQLALCHEMY_DATABASE_URI='postgresql+asyncpg://postgres:postgres@/{{cookiecutter.project_slug}}_db?host=/cloudsql/{{cookiecutter.gcloud_project}}:{{ cookiecutter.gcloud_region }}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance'
-    BACKEND_CORS_ORIGINS=["https://<FRONT_SERVICE_NAME>-<PROJECT_NUMBER>.{{ cookiecutter.gcloud_region }}.run.app"]
+```bash
+# .env content ...
+GITHUB_ACCESS_TOKEN="<PERSONAL_ACCESS_TOKEN>"
+```
 
 ## Generate Project
 
