@@ -1,40 +1,46 @@
 # FastAPI Template Generator
 
-This repository provides a [FastAPI](https://fastapi.tiangolo.com/) base stack:
+This repository provides a duplicable [FastAPI](https://fastapi.tiangolo.com/) code base:
 
-- Runnable from VSCode launch with or without docker containers
-- Generic [Firestore](https://firebase.google.com/docs/firestore?hl=fr) client (authentication with [ADC](https://cloud.google.com/docs/authentication/provide-credentials-adc?hl=fr))
-- Generic [PostgreSQL](https://www.postgresql.org/about/) async client wrapped with [SQLModel](https://sqlmodel.tiangolo.com/) (SQLAlchemy 2.0)
+[See ReadMe](app/{{cookiecutter.project_slug}}/README.md)
+
+- - -
 
 The template is
 
 - Based on [cookiecutter](https://www.cookiecutter.io/)
 - Auto-pushable on Github when generated
-- Auto-deployable on [Cloud Run](https://cloud.google.com/run).
+- Auto-deployable on [Cloud Run](https://cloud.google.com/run)
 
-It assumes the template is pushed on a separate Github repository
+## Usage
 
-## Installation
+**(Recommended)** Use [Stack generator module](https://pypi.org/project/stack-gen/) to generate a new code base from this template.
 
-- Install dependencies
+- - -
+OR
+- - -
 
-  ```bash
-  cd fastapi-generator
-  python3 -m pip install -r requirements.txt
-  ```
+Clone this repository and install dependencies
 
-- (Optional): Add a github access token to .env file if you want the branch protection to be automated at generation
+```bash
+cd fastapi-generator
+python3 -m pip install -r requirements.txt
+```
+
+(Optional): Add a github access token to .env file if you want the branch protection to be automated at generation
 
 ```bash
 # .env content ...
 GITHUB_ACCESS_TOKEN="<PERSONAL_ACCESS_TOKEN>"
 ```
 
-## Generate Project
+Generate the code base
 
 ```bash
 cookiecutter fastapi-generator/app   # Will ask your needs from cookiecutter.json
 ```
+
+## Options
 
 - **'repository_name'** allows you to specify an empty-existing Git repository to push the template on.
 

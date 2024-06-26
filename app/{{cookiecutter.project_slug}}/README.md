@@ -13,7 +13,8 @@
 - [FastApi](https://fastapi.tiangolo.com/)
 - [SQLModel](https://sqlmodel.tiangolo.com/)
 - [SQLAlchemy 2](https://docs.sqlalchemy.org/en/20/)
-- [Firestore](https://firebase.google.com/docs/firestore)
+- [Firestore client](https://firebase.google.com/docs/firestore)
+- [Async PostgreSQL client](https://github.com/MagicStack/asyncpg)
 
 ## Project Setup
 
