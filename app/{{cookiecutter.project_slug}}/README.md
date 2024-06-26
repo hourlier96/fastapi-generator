@@ -47,21 +47,55 @@
 # WITHOUT DOCKER (Guess ADC from env)
 uvicorn app.main:app --reload          # Or from VSCode launcher
 
-# OR
-
 # WITH DOCKER
 Use the launch.json configuration to build and run the container
-
-# (Running the launch is an equivalent to):
-docker build -t <image>:<tag> -f Dockerfile .
-docker run --name {{ cookiecutter.project_slug }} -p 8000:8000 -p 5678:5678 -v "$HOME/.config/gcloud/application_default_credentials.json":/gcp/creds.json --env GOOGLE_APPLICATION_CREDENTIALS=/gcp/creds.json --env GCLOUD_PROJECT={{ cookiecutter.gcloud_project }} <image>:<tag>
-
 ```
 
 ## Tests
 
 ```sh
 poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI in pyproject.toml
+```
+
+## Application Structure
+
+```bash
+{{cookiecutter.project_slug}}
+│
+├── .cloudbuild                    - Cloud Build configuration
+│   └── cloudbuild.yaml
+│
+├── .github                        
+│   └── workflows                  - Github Actions
+│
+├── .vscode
+│   ├── launch.json                - Launch to execute the app
+│   └── tasks.json                 - For dockerized launch
+│
+├── Dockerfile.prod                - Used to build and deploy on Cloud Run
+│
+├── alembic.ini                    - Local Database configuration
+│
+├── app                            - Web stuffs
+│   ├── api                           - Global deps & routing
+│   ├── core                          - Global config & cloud logging
+│   ├── firestore                     - CRUD, Endpoints, Models for Firestore
+│   ├── models                        - Common models for Firestore or PostgreSQL
+│   ├── sqlmodel                      - CRUD, Endpoints, Models for SQLAlchemy
+│   ├── main.py                       - Entrypoint, app instanciation & middleware
+│   └── middleware.py                 - Middleware definitions (Metric, Logs, Exceptions)
+│
+├── docker-compose.yml             - Provide database local containers
+│
+├── main.tf                        - Terraform configuration for deployment
+│
+├── migrations                     - PostgreSQL migrations
+│
+├── pyproject.toml
+│
+├── setup.cfg
+│
+└── tests                          - PostgreSQL unit tests
 ```
 
 ## Deployment
@@ -98,15 +132,11 @@ Once deployment is done:
 
 Cloud Build is now ready to deploy new Cloud Run revision after each push
 
-### Migrations (Postgres only)
-
-Run migrations into the instance with Cloud SQL Proxy
-
 ## CI/CD
 
 ### CI with Github Actions
 
-Use .github/workflows/lint.yaml **by enabling Github Actions API** in your repository
+Use .github/workflows/lint.yaml __by enabling Github Actions API__ in your repository
 
 This will run linting for every Pull Request on develop, uat and main branches
 
@@ -119,10 +149,6 @@ This will run linting for every Pull Request on develop, uat and main branches
 - From the trigger created by Terraform, give Github repository access to Cloud Build
 
 - Copy .env into the secret '{{ cookiecutter.project_slug.replace('_', '-') }}' to ensure Cloud Build will have the correct environement.
-
-- Roles:
-  - Cloud Build Service Account has Cloud Run Admin role
-  - Cloud Build Service Account has Secret Manager Secret Accessor role
 
 ## Api docs
 
