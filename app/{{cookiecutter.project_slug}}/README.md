@@ -78,7 +78,12 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 │
 ├── app                            - Web stuffs
 │   ├── api                           - Global deps & routing
-│   ├── core                          - Global config & cloud logging
+│   └── core                          
+│      ├── google_apis                  - Google API's utils
+│      ├── cloud_logging.py             - Logging wrapper
+│      ├── config.py                    - Global app configuration
+│      └── google_clients.py            - Google API's client builders
+│
 │   ├── firestore                     - CRUD, Endpoints, Models for Firestore
 │   ├── models                        - Common models for Firestore or PostgreSQL
 │   ├── sqlmodel                      - CRUD, Endpoints, Models for SQLAlchemy
@@ -93,9 +98,9 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 │
 ├── pyproject.toml
 │
-├── setup.cfg
+├── setup.cfg                      - Flake8 configuration
 │
-└── tests                          - PostgreSQL unit tests
+└── tests
 ```
 
 ## Deployment
