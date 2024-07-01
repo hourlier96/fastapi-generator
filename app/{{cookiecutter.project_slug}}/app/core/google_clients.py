@@ -1,16 +1,9 @@
 import logging
 import socket
 
-import os
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.auth.exceptions import RefreshError
 from googleapiclient.http import HttpRequest
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import requests
 from requests.exceptions import ReadTimeout
 from tenacity import (
     RetryError,
@@ -21,6 +14,8 @@ from tenacity import (
     wait_random_exponential,
 )
 from urllib3.exceptions import ReadTimeoutError
+
+from app.core.google_apis.auth.credentials import AuthType, get_credentials
 
 DEFAULT_PEOPLE_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
@@ -36,17 +31,14 @@ class GoogleService:
         service_name: str,
         version: str,
         scopes: list[str],
-        credentials_path: str = "credentials.json",
-        token_path: str = "token.json",
+        auth_type: AuthType = AuthType.ADC,
+        **kwargs
     ) -> None:
         self.service_name = service_name
         self.version = version
         self.scopes = scopes if isinstance(scopes, list) else [scopes]
-        # OAuth client path file
-        self.credentials_path = credentials_path
-        # Stored token
-        self.token_path = token_path
-        self.creds = self.get_credentials()
+        self.auth_type = auth_type
+        self.creds = get_credentials(self, **kwargs)
         self.service = build(
             self.service_name,
             self.version,
@@ -54,24 +46,6 @@ class GoogleService:
             cache_discovery=False,
             requestBuilder=HttpRequest,
         )
-
-    def get_credentials(self, needs_refresh=False) -> Credentials:
-        creds = None
-        if needs_refresh:
-            os.remove(self.token_path)
-        if os.path.exists(self.token_path):
-            creds = Credentials.from_authorized_user_file(self.token_path, self.scopes)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_path, self.scopes
-                )
-                creds = flow.run_local_server(port=0)
-            with open(self.token_path, "w") as token:
-                token.write(creds.to_json())
-        return creds
 
     def get(self):
         return self.service
@@ -120,9 +94,6 @@ class GoogleService:
 
             logging.exception(e)
             raise e
-        except RefreshError:
-            self.get_credentials(True)
-            self.make_call(request)
         except Exception as e:
             logging.exception(e)
             raise Exception("Unknown error, see logs.")
