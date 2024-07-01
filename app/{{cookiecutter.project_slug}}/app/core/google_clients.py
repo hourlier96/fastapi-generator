@@ -1,16 +1,9 @@
 import logging
 import socket
 
-import os
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from google.auth.exceptions import RefreshError
 from googleapiclient.http import HttpRequest
-
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import requests
 from requests.exceptions import ReadTimeout
 from tenacity import (
     RetryError,
@@ -22,31 +15,47 @@ from tenacity import (
 )
 from urllib3.exceptions import ReadTimeoutError
 
+from app.core.google_apis.auth.credentials import AuthType, get_credentials
+
 DEFAULT_PEOPLE_SCOPES = [
     "https://www.googleapis.com/auth/userinfo.email",
     "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/cloud-platform",
     "openid",
 ]
 DEFAULT_DRIVE_SCOPES = ["https://www.googleapis.com/auth/drive"]
 
 
 class GoogleService:
+    """
+    Optional Parameters:
+        To use with DWD authentication type
+            Either use
+                user_email:              (Optional) The email address of the user to impersonate.
+                                                    If not specified, the identity used is the SA.
+                service_account_email:   The email address of the Service account
+            Or
+                service_account_file:    The path to the Service account key file (not recommended)
+                user_email:              The email address of the user to impersonate
+
+        To use with OAuth2 authentication type
+            oauth2_client:   The client ID and secret obtained from Google Cloud Platform
+            token_file:      The path to the stored Credentials file
+    """
+
     def __init__(
         self,
         service_name: str,
         version: str,
         scopes: list[str],
-        credentials_path: str = "credentials.json",
-        token_path: str = "token.json",
+        auth_type: AuthType = AuthType.ADC,
+        **kwargs
     ) -> None:
         self.service_name = service_name
         self.version = version
         self.scopes = scopes if isinstance(scopes, list) else [scopes]
-        # OAuth client path file
-        self.credentials_path = credentials_path
-        # Stored token
-        self.token_path = token_path
-        self.creds = self.get_credentials()
+        self.auth_type = auth_type
+        self.creds = get_credentials(self, **kwargs)
         self.service = build(
             self.service_name,
             self.version,
@@ -54,24 +63,6 @@ class GoogleService:
             cache_discovery=False,
             requestBuilder=HttpRequest,
         )
-
-    def get_credentials(self, needs_refresh=False) -> Credentials:
-        creds = None
-        if needs_refresh:
-            os.remove(self.token_path)
-        if os.path.exists(self.token_path):
-            creds = Credentials.from_authorized_user_file(self.token_path, self.scopes)
-        if not creds or not creds.valid:
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_path, self.scopes
-                )
-                creds = flow.run_local_server(port=0)
-            with open(self.token_path, "w") as token:
-                token.write(creds.to_json())
-        return creds
 
     def get(self):
         return self.service
@@ -120,9 +111,6 @@ class GoogleService:
 
             logging.exception(e)
             raise e
-        except RefreshError:
-            self.get_credentials(True)
-            self.make_call(request)
         except Exception as e:
             logging.exception(e)
             raise Exception("Unknown error, see logs.")
@@ -137,8 +125,10 @@ class PeopleService(GoogleService):
         resp = PeopleUtils.me(client)
     """
 
-    def __init__(self):
-        super().__init__("people", "v1", scopes=DEFAULT_PEOPLE_SCOPES)
+    def __init__(self, auth_type=AuthType.ADC, **kwargs):
+        super().__init__(
+            "people", "v1", scopes=DEFAULT_PEOPLE_SCOPES, auth_type=auth_type, **kwargs
+        )
 
 
 class DriveService(GoogleService):
@@ -153,5 +143,5 @@ class DriveService(GoogleService):
         )
     """
 
-    def __init__(self):
-        super().__init__("drive", "v3", scopes=DEFAULT_DRIVE_SCOPES)
+    def __init__(self, auth_type=AuthType.ADC, **kwargs):
+        super().__init__("drive", "v3", scopes=DEFAULT_DRIVE_SCOPES, auth_type=auth_type, **kwargs)
