@@ -36,10 +36,10 @@ google-auth-oauthlib = "^1.2.0"
 google-auth-httplib2 = "^0.2.0"
 google-auth-plugins = "^1.0.1"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 black = "^22.3"
-flake8 = "^4.0.1"
 isort = "^5.13.2"
+ruff = "^0.5.3"
 
 [tool.black]
 line-length = 99                                                              # override black's default line-length
@@ -48,10 +48,37 @@ exclude = '(\.git|\.mypy_cache|\.tox|venv|\.venv|_build|buck-out|build|dist)'
 [tool.isort]
 profile = "black"
 
+[tool.ruff]
+target-version = "py311"
+exclude = [
+    ".venv",
+    "venv",
+    ".git",
+    "__pycache__",
+    "__init__.py",
+    ".mypy_cache",
+    ".pytest_cache",
+    "tests/data_api",
+]
+line-length = 99
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle
+    "UP",    # pyupgrade,
+    "W",
+    "F",
+    "I",
+    "UP",
+    "ASYNC",
+    "F",
+]
+ignore = ["E501", "I001"] # Ignore line length errors & import sorting
+
 [tool.pytest.ini_options]
 env = [
     "ENV=test",
-    "SQLALCHEMY_DATABASE_URI=postgresql+asyncpg://postgres:postgres@localhost:5435/{{cookiecutter.project_slug}}_db_test",
+    "SQLALCHEMY_DATABASE_URI=postgresql+asyncpg://postgres:postgres@localhost:5435/fastapi_template_db_test",
     "SQLALCHEMY_SILENCE_UBER_WARNING=1",
 ]
 asyncio_mode = "auto"

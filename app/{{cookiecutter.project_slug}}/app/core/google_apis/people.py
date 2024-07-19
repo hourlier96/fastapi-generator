@@ -2,7 +2,6 @@ from app.core.google_clients import PeopleService
 
 
 class PeopleUtils:
-
     @staticmethod
     def me(client: PeopleService):
         return client.make_call(

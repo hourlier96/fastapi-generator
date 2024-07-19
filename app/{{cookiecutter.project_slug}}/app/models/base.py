@@ -1,4 +1,4 @@
-from typing import Generic, List, TypeVar
+from typing import Generic, TypeVar
 
 from pydantic import BaseModel
 
@@ -20,7 +20,7 @@ class DateTimeModelMixin(BaseModel, Generic[T]):
 
 
 class Page(BaseModel, Generic[T]):
-    items: List[T]
+    items: list[T]
     total: int
 
     class ConfigDict:

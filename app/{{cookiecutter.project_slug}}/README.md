@@ -90,6 +90,8 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 │   ├── main.py                       - Entrypoint, app instanciation & middleware
 │   └── middleware.py                 - Middleware definitions (Metric, Logs, Exceptions)
 │
+├── format.sh                      - Linting and formatting script
+│
 ├── docker-compose.yml             - Provide database local containers
 │
 ├── main.tf                        - Terraform configuration for deployment
@@ -97,8 +99,6 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 ├── migrations                     - PostgreSQL migrations
 │
 ├── pyproject.toml
-│
-├── setup.cfg                      - Flake8 configuration
 │
 └── tests
 ```

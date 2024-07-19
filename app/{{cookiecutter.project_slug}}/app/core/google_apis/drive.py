@@ -8,7 +8,6 @@ GOOGLE_SLIDES_MIMETYPE = "application/vnd.google-apps.presentation"
 
 
 class DriveUtils:
-
     @staticmethod
     def get_file(client: DriveService, file_id: str, fields: str = DRIVE_DEFAULT_FIELDS):
         return client.make_call(

@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any
 
 from fastapi import APIRouter, Depends
 
@@ -20,10 +20,10 @@ router = APIRouter()
 async def read_users(
     *,
     db: session_dep,
-    page: Optional[int] = 1,
-    per_page: Optional[int] = 20,
-    sort: Optional[str] = None,
-    filters: List[QueryFilter] = Depends(parse_query_filter_params),
+    page: int | None = 1,
+    per_page: int | None = 20,
+    sort: str | None = None,
+    filters: list[QueryFilter] = Depends(parse_query_filter_params),
     is_desc: bool = False,
     use_or: bool = False,
 ) -> Page[User]:

@@ -55,10 +55,10 @@ jobs:
       - name: Run lint
         run: |
           cd ../fastapi_template/
-          pip install flake8==4.0.1 black==22.3 isort==5.13.2
-          flake8 app
+          pip install black==22.3 isort==5.13.2 ruff==0.5.3 
           black app tests --check
           isort app tests --check-only
+          ruff check app tests
 
       - name: Run server
         run: |

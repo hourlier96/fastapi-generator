@@ -1,5 +1,4 @@
 import logging
-from typing import List, Optional
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -11,7 +10,7 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "{{ cookiecutter.project_name }}"
 
     API_PREFIX: str = "/api"
-    BACKEND_CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000"]
+    BACKEND_CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 
     SQLALCHEMY_DATABASE_URI: str = (
         "postgresql+asyncpg://postgres:postgres@localhost:5434/{{cookiecutter.project_slug}}_db"
@@ -19,8 +18,8 @@ class Settings(BaseSettings):
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
 
-    GITHUB_ACCESS_TOKEN: Optional[str] = None
-    GCLOUD_PROJECT_ID: Optional[str] = "{{cookiecutter.gcloud_project}}"
+    GITHUB_ACCESS_TOKEN: str | None = None
+    GCLOUD_PROJECT_ID: str | None = "{{cookiecutter.gcloud_project}}"
 
     model_config = SettingsConfigDict(env_file=".env")
 

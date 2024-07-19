@@ -1,6 +1,6 @@
 import re
-from datetime import date, datetime, timezone
-from typing import Dict, List, Literal, Optional, Set, TypeVar, Union
+from datetime import UTC, date, datetime
+from typing import Literal, TypeVar
 
 from fastapi import HTTPException, status
 from pydantic import model_validator
@@ -17,7 +17,7 @@ def to_snake(camel_str: str) -> str:
 
 
 def convert_datetime_to_realworld(dt: datetime) -> str:
-    return dt.replace(tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
+    return dt.replace(tzinfo=UTC).isoformat().replace("+00:00", "Z")
 
 
 class AppBase(SQLModel):
@@ -34,9 +34,9 @@ class ReadBase(SQLModel):
 
 
 class TableBase(SQLModel):
-    id: Optional[int] = Field(default=None, primary_key=True, nullable=False)
+    id: int | None = Field(default=None, primary_key=True, nullable=False)
 
-    created_at: Optional[datetime] = Field(
+    created_at: datetime | None = Field(
         sa_type=TIMESTAMP(timezone=True),
         sa_column_kwargs={
             "server_default": text("CURRENT_TIMESTAMP"),
@@ -45,7 +45,7 @@ class TableBase(SQLModel):
         nullable=False,
     )
 
-    updated_at: Optional[datetime] = Field(
+    updated_at: datetime | None = Field(
         sa_type=TIMESTAMP(timezone=True),
         sa_column_kwargs={
             "server_default": text("CURRENT_TIMESTAMP"),
@@ -79,23 +79,23 @@ class QueryFilter(SQLModel):
         "is_true",
         "is_false",
     ]
-    value: Union[int, date, datetime, str, List, None]
+    value: int | date | datetime | str | list | None
     # fmt:on
 
     @model_validator(mode="before")
-    def validate_value(cls, values: Dict[str, str]) -> dict:
+    def validate_value(cls, values: dict[str, str]) -> dict:
         # fmt:off
-        comparison_operators: Set[str] = {
+        comparison_operators: set[str] = {
             "<", "lt",
             "<=", "le",
             ">=", "ge",
             ">", "gt",
         }
-        range_operators: Set[str] = {
+        range_operators: set[str] = {
             "in",
             "not_in",
         }
-        type_operators: Set[str] = {
+        type_operators: set[str] = {
             "is_null",
             "is_not_null",
             "is_empty",
@@ -104,7 +104,7 @@ class QueryFilter(SQLModel):
             "is_false"
         }
         # fmt:on
-        special_operators: Set[str] = {*range_operators, *type_operators}
+        special_operators: set[str] = {*range_operators, *type_operators}
 
         field, operator, value = values["field"], values.get("operator"), values.get("value")
         values["field"] = to_snake(field)
@@ -133,7 +133,7 @@ class QueryFilter(SQLModel):
             if not value:
                 raise HTTPException(status_code=400, detail="Value is required for this operator.")
 
-            if not isinstance(value, (int, date, datetime)):
+            if not isinstance(value, int | date | datetime):
                 if operator in comparison_operators:
                     raise ValueError("Some error")
         else:

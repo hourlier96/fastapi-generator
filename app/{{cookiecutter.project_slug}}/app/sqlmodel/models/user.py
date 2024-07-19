@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 from pydantic import ConfigDict
 from sqlmodel import Relationship
@@ -23,7 +23,7 @@ class UserBase(AppBase):
 class User(UserBase, TableBase, table=True):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    todos: List["Todo"] = Relationship(back_populates="users", link_model=UserTodo)
+    todos: list["Todo"] = Relationship(back_populates="users", link_model=UserTodo)
 
 
 class UserRead(ReadBase, UserBase):
@@ -31,7 +31,7 @@ class UserRead(ReadBase, UserBase):
 
 
 class UserReadTopics(ReadBase, UserBase):
-    todos: List["TodoRead"] = []
+    todos: list["TodoRead"] = []
 
 
 class UserCreate(UserBase):

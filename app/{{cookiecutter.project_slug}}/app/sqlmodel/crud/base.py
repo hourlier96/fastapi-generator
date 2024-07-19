@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, TypeVar
 
 from sqlalchemy import VARCHAR, Enum, asc, cast, desc, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,7 +14,7 @@ UpdateModelType = TypeVar("UpdateModelType", bound=SQLModel)
 
 
 class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
-    def __init__(self, model: Type[ModelType]):
+    def __init__(self, model: type[ModelType]):
         """
         CRUD object with default methods to Create, Read, Update, Delete (CRUD).
         **Parameters**
@@ -22,7 +22,7 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         """
         self.model = model
 
-    async def get(self, db: AsyncSession, id: int) -> Optional[ModelType]:
+    async def get(self, db: AsyncSession, id: int) -> ModelType | None:
         statement = select(self.model).where(self.model.id == id)
         return (await db.scalars(statement)).first()
 
@@ -30,10 +30,10 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         self,
         db: AsyncSession,
         *,
-        page: Optional[int] = 1,
-        per_page: Optional[int] = 20,
-        sort: Optional[str] = None,
-        filters: Optional[List[QueryFilter]] = [],
+        page: int | None = 1,
+        per_page: int | None = 20,
+        sort: str | None = None,
+        filters: list[QueryFilter] | None = [],
         is_desc: bool = False,
         use_or: bool = False,
     ) -> Page[ModelType]:
@@ -60,10 +60,9 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         db: AsyncSession,
         *,
         db_obj: ModelType,
-        obj_in: Union[UpdateModelType, Dict[str, Any]],
+        obj_in: UpdateModelType | dict[str, Any],
         commit: bool = True,
     ) -> ModelType:
-
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:
@@ -95,7 +94,7 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         *,
         page: int = 1,
         per_page: int = 10,
-        sort: Optional[str] = None,
+        sort: str | None = None,
         is_desc: bool = False,
     ) -> Page[ModelType]:
         if sort:
@@ -117,7 +116,7 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         return Page(items=items, total=total)
 
     def update_query_with_filters_(
-        self, statement: Select, query_filters: List[QueryFilter], use_or=False
+        self, statement: Select, query_filters: list[QueryFilter], use_or=False
     ) -> Select:
         operator_matcher = {
             "alchemy_func": {
@@ -147,7 +146,7 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
     def manage_operators(
         self,
         statement: Select,
-        query_filters: List[QueryFilter],
+        query_filters: list[QueryFilter],
         operator_matcher: dict,
         use_or: bool = False,
     ) -> Select:

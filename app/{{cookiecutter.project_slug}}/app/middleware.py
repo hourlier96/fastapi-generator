@@ -1,6 +1,7 @@
 import inspect
 import json
 import time
+from collections.abc import AsyncIterator
 from typing import Any
 
 from fastapi import FastAPI
@@ -11,7 +12,6 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.types import Message
 from starlette_context import context
-from typing_extensions import AsyncIterator
 
 from app.core.cloud_logging import log, logger_struct
 from app.core.config import settings

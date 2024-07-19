@@ -1,5 +1,5 @@
 import json
-from typing import Annotated, List, Optional
+from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from app.sqlmodel.models.base import QueryFilter
 session_dep = Annotated[AsyncSession, Depends(get_db_session)]
 
 
-def parse_query_filter_params(filters: Optional[str] = None) -> List[QueryFilter]:
+def parse_query_filter_params(filters: str | None = None) -> list[QueryFilter]:
     if not filters:
         return []
 

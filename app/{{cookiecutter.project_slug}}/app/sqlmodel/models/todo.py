@@ -1,5 +1,4 @@
 import enum
-from typing import List, Optional
 
 from sqlmodel import Relationship
 
@@ -16,12 +15,12 @@ class TodoPriority(str, enum.Enum):
 
 class TodoBase(AppBase):
     title: str
-    description: Optional[str]
+    description: str | None
     priority: TodoPriority
 
 
 class Todo(TodoBase, TableBase, table=True):
-    users: List["User"] = Relationship(
+    users: list["User"] = Relationship(
         back_populates="todos", link_model=UserTodo, sa_relationship_kwargs={"lazy": "selectin"}
     )
 
@@ -32,12 +31,12 @@ class TodoRead(ReadBase, TodoBase):
 
 class TodoReadUsers(AppBase):
     id: int
-    users: List["UserRead"] = []
+    users: list["UserRead"] = []
 
 
 class TodoCreate(TodoBase):
-    users_id: Optional[List[int]]
+    users_id: list[int] | None
 
 
 class TodoUpdate(TodoBase):
-    users_id: Optional[List[int]]
+    users_id: list[int] | None

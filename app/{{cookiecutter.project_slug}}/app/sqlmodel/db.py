@@ -1,5 +1,6 @@
 import contextlib
-from typing import Any, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Any
 
 from sqlalchemy import AsyncAdaptedQueuePool, NullPool
 from sqlalchemy.ext.asyncio import (

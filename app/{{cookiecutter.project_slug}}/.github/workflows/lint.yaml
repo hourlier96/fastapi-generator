@@ -1,4 +1,4 @@
-name: Run Flake8, Black, ISort
+name: Run Black, ISort, Ruff
 
 on:
   pull_request:
@@ -17,11 +17,7 @@ jobs:
           python-version: 3.11
 
       - name: Install linters
-        run: pip install flake8==4.0.1 black==22.3 isort==5.13.2
-
-      - name: Run Flake8
-        run: flake8 app tests
-        if: always()
+        run: pip install black==22.3 isort==5.13.2 ruff==0.5.3
 
       - name: Run black
         run: black app tests --check
@@ -29,4 +25,8 @@ jobs:
 
       - name: Run isort
         run: isort app tests --check-only
+        if: always()
+
+      - name: Run ruff
+        run: ruff app tests
         if: always()

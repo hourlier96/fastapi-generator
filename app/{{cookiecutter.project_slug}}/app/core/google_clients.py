@@ -1,9 +1,8 @@
 import logging
-import socket
 
-from googleapiclient.http import HttpRequest
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import HttpRequest
 from requests.exceptions import ReadTimeout
 from tenacity import (
     RetryError,
@@ -87,10 +86,10 @@ class GoogleService:
             # all attempts failed, we give up
             raise Exception("API quota error")
         except (
+            TimeoutError,
             ConnectionResetError,
             ReadTimeout,
             ReadTimeoutError,
-            socket.timeout,
             BrokenPipeError,
         ):
             raise TryAgain
