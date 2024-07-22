@@ -87,6 +87,7 @@ def checkDatabaseTypeOption(value):
         print("Setting up Firestore client configuration...")
         shutil.rmtree("app/sqlmodel")
         shutil.rmtree("tests")
+        shutil.rmtree("migrations")
         utils.remove_reference_from_project("from app.sqlmodel")
         utils.remove_reference_from_project("import asynccontextmanager")
         utils.remove_decorated_function("app/main.py", "asynccontextmanager")

@@ -3,6 +3,7 @@ import logging
 import sys
 from typing import Any, no_type_check
 
+from asgi_correlation_id import CorrelationIdFilter
 from fastapi.logger import logger as fastapi_logger
 from google.cloud.logging_v2.client import Client as google_cloud_logging_v2_client
 from google.cloud.logging_v2.handlers import CloudLoggingFilter, CloudLoggingHandler
@@ -111,8 +112,9 @@ class Logging:
         # Force local and cloud handlers to use the same LOG_LEVEL as FastAPI's
         for handler in self.logger.handlers:
             handler.setLevel(level=self.level)
+            handler.addFilter(CorrelationIdFilter("correlation_id"))
             formatter = logging.Formatter(
-                fmt="[%(asctime)s] - [%(pathname)s] -  [%(levelname)s] - %(message)s"
+                fmt="[%(asctime)s] - [%(correlation_id)s] - [%(pathname)s] -  [%(levelname)s] - %(message)s"
             )
             handler.setFormatter(formatter)
 

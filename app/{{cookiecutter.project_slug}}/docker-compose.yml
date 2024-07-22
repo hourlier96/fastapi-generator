@@ -22,3 +22,21 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: "{{cookiecutter.project_slug}}_db_test"
+
+  # Runs the app from inside container with debugger
+  # app:
+  #   image: "{{cookiecutter.project_slug}}:latest"
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8000:8000"
+  #     - "5678:5678"
+  #   environment:
+  #     GOOGLE_APPLICATION_CREDENTIALS: "/gcp/application_default_credentials.json"
+  #     GCLOUD_PROJECT: "{{cookiecutter.gcloud_project}}"
+  #     WATCHFILES_FORCE_POLLING: 1
+  #     PYDEVD_DISABLE_FILE_VALIDATION: 1
+  #   volumes:
+  #     - ~/.config/gcloud:/gcp:ro
+  #     - ./app:/code/app

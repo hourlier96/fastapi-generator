@@ -99,8 +99,8 @@ class LoggingMiddlewareReq(BaseHTTPMiddleware):
             response = await call_next(request)
             response_body = await self.resolve_response(response)
             if settings.ENV in ["local", "test"]:
-                self.log_request(request, request_body, context)
-                self.log_response(request, response_body)
+                self._log_request(request, request_body, context)
+                self._log_response(request, response_body)
             logger_struct.log_struct(
                 {
                     "user": context.get("USER_ID"),
@@ -119,53 +119,55 @@ class LoggingMiddlewareReq(BaseHTTPMiddleware):
         finally:
             return response_body if response_body else response
 
-    def log_request(self, request, request_body, context):
-        header = f"\n===== REQUEST ({request.method} {request.url.path}) =====\n"
-        print(header)
+    def _log_request(self, request, request_body, context):
+        log_lines = [f"===== REQUEST ({request.method} {request.url.path}) ====="]
 
-        print("   Author:")
-        if context.get("USER_ID"):
-            print(f"      f{context.get('USER_ID')}")
-        else:
-            print("      Unknown")
+        log_lines.append("    Author:")
+        log_lines.append(f"        {context.get('USER_ID', 'Unknown')}")
 
-        print("\n   Query parameters:")
-        if request.query_params._dict and len(request.query_params._dict) > 0:
-            for key, value in request.query_params._dict.items():
-                print(f"      {key}: {value}")
-        else:
-            print("      Empty")
-        print("\n   Path parameters:")
-        if request.path_params and len(request.path_params) > 0:
-            for key, value in request.path_params.items():
-                print(f"      {key}: {value}")
-        else:
-            print("      Empty")
-        print("\n   Body:")
-        if request_body and len(request_body) > 0:
-            for key, value in request_body.items():
-                print(f"      {key}: {value}")
-        else:
-            print("      Empty")
+        for param_type, params in [
+            ("Query parameters:", request.query_params._dict),
+            ("Path parameters:", request.path_params),
+            ("Body:", request_body),
+        ]:
+            log_lines.append(f"    {param_type}")
+            if params:
+                log_lines.extend(f"        {key}: {value}" for key, value in params.items())
+            else:
+                log_lines.append("        Empty")
 
-    def log_response(self, request, response_body):
-        header = f"\n\n===== RESPONSE ({request.method} {request.url.path}) =====\n"
-        print(header)
+        print("\n".join(log_lines))
+
+    def _log_response(self, request, response_body):
+        header = f"\n===== RESPONSE ({request.method} {request.url.path}) =====\n"
+
         if response_body:
             content = json.loads(response_body.body.decode("utf-8"))
-            print("   Status code:")
-            print(f"      {response_body.status_code}")
-            print("\n   Content-Length:")
-            print(f"      {len(str(content))}")
-            print("\n   Content:")
-            if content and "total" in content:
-                print(f"      {content['total']} items")
-            elif isinstance(content, list):
-                print(f"      {len(content)} items")
-            else:
-                print(f"      {content}")
+            status_code = f"    Status code:\n        {response_body.status_code}"
+            content_length = f"\n    Content-Length:\n        {len(str(content))}"
+            content_summary = (
+                f"        {content['total']} items"
+                if content and "total" in content
+                else (
+                    f"        {len(content)} items"
+                    if isinstance(content, list)
+                    else f"        {content}"
+                )
+            )
+        else:
+            status_code = "    Status code: (Unknown)"
+            content_length = "\n    Content-Length: (Unknown)"
+            content_summary = "\n    Content: (Unknown)"
 
-        print(("\n" + "".join(["=" for _ in header]) + "\n")[0:100])
+        log_message = (
+            f"{header}"
+            f"{status_code}"
+            f"{content_length}"
+            f"\n    Content:\n{content_summary}\n"
+            f"{''.join(['=' for _ in header])[:100]}\n"
+        )
+
+        print(log_message)
 
 
 class MetricMiddleware(BaseHTTPMiddleware):

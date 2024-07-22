@@ -17,19 +17,19 @@
       }
     },
     {
-      "name": "Docker: Build & Run",
-      "type": "docker",
-      "request": "launch",
-      "preLaunchTask": "docker-run: debug",
-      "python": {
-        "pathMappings": [
-          {
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "/code"
-          }
-        ],
-        "projectType": "fastapi"
-      }
+      "name": "Debug from container",
+      "type": "debugpy",
+      "request": "attach",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}",
+          "remoteRoot": "/code"
+        }
+      ]
     }
   ]
 }

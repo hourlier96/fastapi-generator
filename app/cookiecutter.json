@@ -18,10 +18,22 @@
     "Stephane Conq <stephane.conq@devoteamgcloud.com>",
     "Valdo Negou <valdo.negou@devoteamgcloud.com>"
   ],
-  "database": ["PostgreSQL", "Firestore", "Both"],
+  "database": [
+    "PostgreSQL",
+    "Firestore",
+    "Both"
+  ],
   "as_container": true,
   "gcloud_project": "<GCP_PROJECT_ID>",
-  "gcloud_region": ["europe-west9"],
+  "gcloud_region": [
+    "europe-west9",
+    "europe-west1",
+    "europe-west2",
+    "europe-west3",
+    "europe-west4",
+    "europe-west6",
+    "europe-west8"
+  ],
   "__prompts__": {
     "repository_name": "Empty repository name you want to push to (let empty to refuse or use format <github_username>/<repo_name>):",
     "project_name": "Select your project name:",

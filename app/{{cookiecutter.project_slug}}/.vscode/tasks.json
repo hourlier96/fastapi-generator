@@ -32,7 +32,7 @@
         },
         "volumes": [
           {
-            "localPath": "/home/augustin/.config/gcloud",
+            "localPath": "${userHome}/.config/gcloud",
             "containerPath": "/gcp",
             "permissions": "ro"
           },

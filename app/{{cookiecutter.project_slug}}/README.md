@@ -48,7 +48,7 @@
 uvicorn app.main:app --reload          # Or from VSCode launcher
 
 # WITH DOCKER
-Use the launch.json configuration to build and run the container
+Run the service named 'app' in docker-compose.yml
 ```
 
 ## Tests
@@ -109,7 +109,7 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 
 ### Initialisation
 
-To deploy the infrastructure, make sure ADC is configured correctly.
+To deploy the infrastructure, **make sure ADC is configured correctly.**
 
 The main.tf will deploy:
 
@@ -134,6 +134,7 @@ Once deployment is done:
 
 - [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
 - [Add .env content into secret version](https://console.cloud.google.com/security/secret-manager/secret/{{cookiecutter.project_slug.replace('_','-')}}/versions?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
+- [Add Secret Manager Secret Accessor IAM role to Cloud Build default service account](https://console.cloud.google.com/iam-admin/iam?referrer=search&authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
 
 Cloud Build is now ready to deploy new Cloud Run revision after each push
 

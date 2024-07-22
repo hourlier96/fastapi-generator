@@ -34,7 +34,7 @@ steps:
         --allow-unauthenticated \
         --set-env-vars=PROJECT_ID=$PROJECT_ID \
         --region $_REGION \
-        --add-cloudsql-instances $_PROJECT_ID:$_REGION:$_SERVICE-instance \
+        --add-cloudsql-instances $PROJECT_ID:$_REGION:$_SERVICE-instance \
         --timeout 3600
 
 images:

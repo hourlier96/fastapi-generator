@@ -26,6 +26,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY ./.env /code/.env
 COPY ./app /code/app
 
-# Command is managed in .vscode/tasks.json for automation
-# Uncomment to run manually
-# CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+CMD ["python", "-m", "debugpy", "--listen", "0.0.0.0:5678", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
