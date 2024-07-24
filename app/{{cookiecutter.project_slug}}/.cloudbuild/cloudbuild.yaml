@@ -5,11 +5,18 @@ steps:
     args:
       - -c
       - gcloud secrets versions access latest --secret=$_SERVICE --project=$PROJECT_ID > .env
+  
+  - id: get-img-cache
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull europe-docker.pkg.dev/$PROJECT_ID/$_REPO/$_SERVICE:latest || exit 0']
 
   - id: build
     name: gcr.io/cloud-builders/docker
     args:
       - build
+      - --cache-from
+      - europe-docker.pkg.dev/$PROJECT_ID/$_REPO/$_SERVICE
       - -t
       - europe-docker.pkg.dev/$PROJECT_ID/$_REPO/$_SERVICE
       - -f
@@ -21,6 +28,20 @@ steps:
     args:
       - push
       - europe-docker.pkg.dev/$PROJECT_ID/$_REPO/$_SERVICE
+
+  - id: tf-init
+    name: hashicorp/terraform:latest
+    entrypoint: sh
+    args:
+      - -c
+      - cd iac && terraform init -backend-config="env/${_ENV}/backend.conf"
+
+  - id: tf-apply
+    name: hashicorp/terraform:latest
+    entrypoint: sh
+    args:
+      - -c
+      - cd iac && terraform apply --auto-approve
 
   - id: deploy
     name: gcr.io/cloud-builders/gcloud

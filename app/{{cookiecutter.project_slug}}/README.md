@@ -35,10 +35,13 @@
   docker compose up -d
   ```
 
-- Apply migrations
+- (Postgres only) Apply migrations
 
   ```sh
   alembic upgrade head
+  
+  # Run Cloud SQL Proxy first to apply migrations on deployed application
+  # cloud-sql-proxy -u cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
   ```
 
 ### Run locally
@@ -83,12 +86,20 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 │      ├── cloud_logging.py             - Logging wrapper
 │      ├── config.py                    - Global app configuration
 │      └── google_clients.py            - Google API's client builders
-│
+│   │
 │   ├── firestore                     - CRUD, Endpoints, Models for Firestore
 │   ├── models                        - Common models for Firestore or PostgreSQL
 │   ├── sqlmodel                      - CRUD, Endpoints, Models for SQLAlchemy
 │   ├── main.py                       - Entrypoint, app instanciation & middleware
 │   └── middleware.py                 - Middleware definitions (Metric, Logs, Exceptions)
+│
+├── iac                            - Terraform resources
+│
+├── migrations                     - PostgreSQL migrations
+│
+├── tests                          - PostgresSQL unit tests
+│
+├── deploy.sh                      - Deployment script
 │
 ├── format.sh                      - Linting and formatting script
 │
@@ -96,59 +107,63 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 │
 ├── main.tf                        - Terraform configuration for deployment
 │
-├── migrations                     - PostgreSQL migrations
-│
-├── pyproject.toml
-│
-└── tests
+└── pyproject.toml
+
 ```
 
 ## Deployment
 
-:warning: Everything under this section assumes you specified a repository to push to, and choosed 'yes' to "as_container" question. Otherwise update the main.tf according yo your needs before running  :warning:
+:warning: Everything under this section assumes **you specified a repository to push to**, and **choosed 'yes' to "as_container" question**.
 
 ### Initialisation
 
-To deploy the infrastructure, **make sure ADC is configured correctly.**
+First, **make sure ADC is configured correctly.**
 
-The main.tf will deploy:
-
-- Image into the Artifact Registry used by Cloud Run
-- Cloud Run service
-- Secret in Secret Manager
-- Cloud Build Trigger linked to the repository specified
-
-Additionally, it will deploy a Cloud SQL and/or Firestore database according to you database choice.
-You may need additional IAM roles to deploy databases
-
-```bash
-
-# Ensure your .env content is the deployed version before running
-cd {{ cookiecutter.project_slug }}
-terraform init
-terraform apply
-
-```
-
-Once deployment is done:
+Then, to start a first deployment:
 
 - [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
-- [Add .env content into secret version](https://console.cloud.google.com/security/secret-manager/secret/{{cookiecutter.project_slug.replace('_','-')}}/versions?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
-- [Add Secret Manager Secret Accessor IAM role to Cloud Build default service account](https://console.cloud.google.com/iam-admin/iam?referrer=search&authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
 
-Cloud Build is now ready to deploy new Cloud Run revision after each push
+- Init required resources and start deployment:
+
+```bash
+./deploy.sh
+# Creates required resources & IAM permissions
+# - Secret in Secret Manager filled with .env.dev
+# - Cloud Storage bucket to store terraform state
+# - Artifact registry repository to store Cloud Run images
+# - Required IAM permissions for Cloud Build default SA
+#     - run.admin
+#     - artifactregistry.admin
+#     - run.admin
+#     - datastore.owner
+#     - cloudsql.admin
+#     - secretmanager.secretAccessor
+#     - storage.admin
+# 
+# - Cloud Build trigger to run deployment on push
+
+# Then it starts the Cloud Build trigger
+```
+
+Cloud Build is now ready to auto deploy new Cloud Run revision after each push
 
 ## CI/CD
 
 ### CI with Github Actions
 
-**Enable Github Actions API** in your repository
+[**Enable Github Actions API**](https://github.com/{{cookiecutter.repository_name}}/actions) in your repository
 
-This will run linting for every Pull Request on develop, uat and main branches
+Actions are configured to run linting for every Pull Request on develop, uat and main branches
 
-### CD with Cloud Build & Cloud Run
+### CD with Cloud Build & Terraform
 
-.cloudbuild/cloudbuild.yaml is used automatically to deploy to Cloud Run according to your Cloud Build trigger configuration
+On push, .cloudbuild/cloudbuild.yaml will:
+
+- Build and push new image
+- re-apply the iac/main.tf infrastructure to ensure consistency
+- Deploy the new Cloud Run revision
+
+Use iac/main.tf to deploy new GCP resources if possible to make terraform aware of it
 
 ## Api docs
 
