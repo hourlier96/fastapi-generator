@@ -55,7 +55,7 @@ resource "google_sql_user" "updated_user" {
 resource "google_firestore_database" "database" {
   count       = var.database_choosed.firestore ? 1 : 0
   project     = "{{cookiecutter.gcloud_project}}"
-  name        = "(default)"
+  name        = "{{cookiecutter.project_slug}}"
   location_id = "eur3"
   type        = "FIRESTORE_NATIVE"
 }

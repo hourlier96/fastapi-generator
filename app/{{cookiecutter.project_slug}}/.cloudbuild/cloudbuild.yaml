@@ -41,7 +41,7 @@ images:
   - europe-docker.pkg.dev/$PROJECT_ID/$_REPO/$_SERVICE
 
 substitutions:
-  _REPO: cookiecutter-template
+  _REPO: "{{ cookiecutter.project_slug.replace('_', '-') }}-repository"
   _SERVICE: "{{ cookiecutter.project_slug.replace('_', '-') }}"
   _REGION: "{{ cookiecutter.gcloud_region }}"
 

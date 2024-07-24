@@ -28,5 +28,5 @@ jobs:
         if: always()
 
       - name: Run ruff
-        run: ruff app tests
+        run: ruff check app tests
         if: always()

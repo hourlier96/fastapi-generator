@@ -8,9 +8,11 @@ class Firestore(metaclass=Singleton):
     def __init__(self) -> None:
         # Searches first from .env, or infer if not specified
         if settings.GCLOUD_PROJECT_ID:
-            self.client = firestore.Client(project=settings.GCLOUD_PROJECT_ID)
+            self.client = firestore.Client(
+                project=settings.GCLOUD_PROJECT_ID, database="{{cookiecutter.project_slug}}"
+            )
         else:
-            self.client = firestore.Client()
+            self.client = firestore.Client(database="{{cookiecutter.project_slug}}")
 
     def get_all_documents(self, collection_name: str, as_dict=True) -> list[dict]:
         doc_list = self.client.collection(collection_name).get()

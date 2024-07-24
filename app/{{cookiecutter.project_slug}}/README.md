@@ -142,19 +142,13 @@ Cloud Build is now ready to deploy new Cloud Run revision after each push
 
 ### CI with Github Actions
 
-Use .github/workflows/lint.yaml __by enabling Github Actions API__ in your repository
+**Enable Github Actions API** in your repository
 
 This will run linting for every Pull Request on develop, uat and main branches
 
 ### CD with Cloud Build & Cloud Run
 
 .cloudbuild/cloudbuild.yaml is used automatically to deploy to Cloud Run according to your Cloud Build trigger configuration
-
-*Requirements*:
-
-- From the trigger created by Terraform, give Github repository access to Cloud Build
-
-- Copy .env into the secret '{{ cookiecutter.project_slug.replace('_', '-') }}' to ensure Cloud Build will have the correct environement.
 
 ## Api docs
 
