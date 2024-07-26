@@ -5,7 +5,7 @@ if gcloud beta builds triggers describe {{ cookiecutter.project_slug.replace('_'
     gcloud beta builds triggers run {{ cookiecutter.project_slug.replace('_', '-') }} \
       --project="{{cookiecutter.gcloud_project}}" \
       --region="{{cookiecutter.gcloud_region}}" \
-      --branch="main" > /dev/null && echo "Cloud Build trigger has been run"
+      --branch="main" > /dev/null && echo "Cloud Build trigger has been run: see at https://console.cloud.google.com/cloud-build/builds;region={{cookiecutter.gcloud_region}}?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project"
 else
   # Add required API activation
   printf "Checking and enabling required APIs...\n"
@@ -64,6 +64,9 @@ else
     --member="$SERVICE_ACCOUNT_EMAIL" \
     --role="roles/storage.admin" > /dev/null && echo "Role storage.admin granted to $SERVICE_ACCOUNT_EMAIL"
 
+  gcloud projects add-iam-policy-binding {{cookiecutter.gcloud_project}} \
+    --member="$SERVICE_ACCOUNT_EMAIL" \
+    --role="roles/serviceusage.serviceUsageAdmin" > /dev/null && echo "Role serviceusage.serviceUsageAdmin granted to $SERVICE_ACCOUNT_EMAIL"
 
   # Create Cloud Build trigger (repository must be already connected)
   printf "\nINFO: Creating Cloud Build trigger...\n"
@@ -82,5 +85,5 @@ else
   gcloud beta builds triggers run {{ cookiecutter.project_slug.replace('_', '-') }} \
       --project="{{cookiecutter.gcloud_project}}" \
       --region="{{cookiecutter.gcloud_region}}" \
-      --branch="main" > /dev/null && echo "Cloud Build trigger has been run"
+      --branch="main" > /dev/null && echo "Cloud Build trigger has been run: see at https://console.cloud.google.com/cloud-build/builds;region={{cookiecutter.gcloud_region}}?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project"
 fi

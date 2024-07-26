@@ -37,4 +37,4 @@ hooks_modules
 .pgdata
 
 # Terraform
-terraform/.terraform*
+iac/.terraform*

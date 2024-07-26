@@ -40,8 +40,11 @@
   ```sh
   alembic upgrade head
   
-  # Run Cloud SQL Proxy first to apply migrations on deployed application
-  # cloud-sql-proxy -u cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
+  # For migrations on Cloud SQL instance, ensure creating unix socket & starting Cloud SQL Proxy first
+  # sudo mkdir /cloudsql && sudo chmod 777 /cloudsql
+  # cloud-sql-proxy -u /cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
+  
+  # Think about replacing your .env content with value to deploy
   ```
 
 ### Run locally
@@ -134,11 +137,11 @@ Then, to start a first deployment:
 # - Required IAM permissions for Cloud Build default SA
 #     - run.admin
 #     - artifactregistry.admin
-#     - run.admin
 #     - datastore.owner
 #     - cloudsql.admin
 #     - secretmanager.secretAccessor
 #     - storage.admin
+#     - serviceusage.serviceUsageAdmin
 # 
 # - Cloud Build trigger to run deployment on push
 
