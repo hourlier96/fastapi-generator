@@ -11,20 +11,21 @@ variable "database_choosed" {
   }
 }
 
-# TODO activate required apis
-# variable "needed_apis" {
-#   description = "List of apis needed to make the project work"
-#   type        = list(string)
-#   default = [
-#     "compute.googleapis.com",
-#     "iam.googleapis.com",
-#     "sqladmin.googleapis.com",
-#     "cloudfunctions.googleapis.com",
-#     "storage-component.googleapis.com",
-#     "dns.googleapis.com",
-#     "servicenetworking.googleapis.com",
-#     "certificatemanager.googleapis.com",
-#     "cloudbuild.googleapis.com",
-#     "sql-component.googleapis.com"
-#   ]
-# }
+variable "needed_apis" {
+  description = "List of APIs needed"
+  type        = list(string)
+  default = [
+    "compute.googleapis.com", # Needed for network access
+    "iam.googleapis.com",     # Needed for managing permissions
+    "run.googleapis.com",     # Cloud Run API
+  ]
+}
+
+# Local variable to dynamically build the final list of APIs
+locals {
+  all_needed_apis = distinct(concat(
+    var.needed_apis,
+    var.database_choosed.sql ? ["sqladmin.googleapis.com"] : [],
+    var.database_choosed.firestore ? ["firestore.googleapis.com"] : []
+  ))
+}

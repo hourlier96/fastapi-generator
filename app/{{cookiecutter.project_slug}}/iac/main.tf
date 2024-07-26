@@ -1,3 +1,9 @@
+resource "google_project_service" "apis_activation" {
+  for_each = toset(local.all_needed_apis)
+  project  = "{{ cookiecutter.gcloud_project }}"
+  service  = each.key
+}
+
 # Cloud SQL Instance
 resource "google_sql_database_instance" "instance" {
   count            = var.database_choosed.sql ? 1 : 0
@@ -10,6 +16,8 @@ resource "google_sql_database_instance" "instance" {
   }
 
   deletion_protection = "false"
+
+  depends_on = [google_project_service.apis_activation]
 }
 
 # Cloud SQL Database
@@ -34,6 +42,8 @@ resource "google_firestore_database" "database" {
   name        = "{{ cookiecutter.project_slug.replace('_', '-') }}"
   location_id = "eur3"
   type        = "FIRESTORE_NATIVE"
+
+  depends_on = [google_project_service.apis_activation]
 }
 
 # Firestore doc exemple
@@ -92,6 +102,8 @@ resource "google_cloud_run_service" "backend_service" {
       template.0.metadata.0.annotations,
     ]
   }
+
+  depends_on = [google_project_service.apis_activation]
 }
 
 data "google_iam_policy" "noauth" {
