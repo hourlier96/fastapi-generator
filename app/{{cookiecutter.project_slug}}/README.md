@@ -26,7 +26,7 @@
   poetry config virtualenvs.in-project true
   poetry env use 3.11
   poetry shell
-  poetry install
+  poetry install --without prod
   ```
 
 - (Postgres only) Create and run required databases
