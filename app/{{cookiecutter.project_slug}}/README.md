@@ -35,16 +35,12 @@
   docker compose up -d
   ```
 
-- (Postgres only) Apply migrations
+- (Postgres only) Apply migrations from VSCode launcher
 
   ```sh
-  alembic upgrade head
-  
   # For migrations on Cloud SQL instance, ensure creating unix socket & starting Cloud SQL Proxy first
   # sudo mkdir /cloudsql && sudo chmod 777 /cloudsql
   # cloud-sql-proxy -u /cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
-  
-  # Think about replacing your .env content with value to deploy
   ```
 
 ### Run locally

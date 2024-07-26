@@ -8,7 +8,7 @@ if gcloud beta builds triggers describe {{ cookiecutter.project_slug.replace('_'
       --branch="main" > /dev/null && echo "Cloud Build trigger has been run: see at https://console.cloud.google.com/cloud-build/builds;region={{cookiecutter.gcloud_region}}?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project"
 else
   # Add required API activation
-  printf "Checking and enabling required APIs...\n"
+  printf "INFO: Checking and enabling required APIs...\n"
   gcloud services enable \
       secretmanager.googleapis.com \
       artifactregistry.googleapis.com \
