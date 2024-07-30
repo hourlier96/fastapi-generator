@@ -125,7 +125,8 @@ Then, to start a first deployment:
 - Init required resources and start deployment:
 
 ```bash
-./deploy.sh
+./deploy.sh -e <dev|staging|prod> # Will get the correct .env.x file & inject variables
+
 # Creates required resources & IAM permissions
 # - Secret in Secret Manager filled with .env.dev
 # - Cloud Storage bucket to store terraform state
