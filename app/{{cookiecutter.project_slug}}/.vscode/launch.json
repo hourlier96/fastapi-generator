@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "FastAPI run server",
+      "name": "Run app locally",
       "type": "debugpy",
       "request": "launch",
       "module": "uvicorn",
@@ -17,7 +17,7 @@
       }
     },
     {
-      "name": "Debug from container",
+      "name": "Attach debugger to app container",
       "type": "debugpy",
       "request": "attach",
       "connect": {
@@ -30,6 +30,30 @@
           "remoteRoot": "/code"
         }
       ]
+    },
+    {
+      "name": "Apply migrations locally",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "alembic",
+      "args": ["upgrade", "head"],
+      "jinja": true,
+      "justMyCode": true,
+      "env": {
+        "SQLALCHEMY_DATABASE_URI": "postgresql+asyncpg://postgres:postgres@localhost:5434/{{cookiecutter.project_slug}}_db"
+      }
+    },
+    {
+      "name": "Apply migrations on Cloud SQL Instance",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "alembic",
+      "args": ["upgrade", "head"],
+      "jinja": true,
+      "justMyCode": true,
+      "env": {
+        "SQLALCHEMY_DATABASE_URI": "postgresql+asyncpg://postgres:postgres@/{{cookiecutter.project_slug}}_db?host=/cloudsql/{{cookiecutter.gcloud_project}}:{{ cookiecutter.gcloud_region }}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance'"
+      }
     }
   ]
 }

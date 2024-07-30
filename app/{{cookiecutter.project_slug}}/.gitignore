@@ -23,7 +23,6 @@ cover/
 # Environments
 .env
 .venv
-env/
 venv/
 ENV/
 env.bak/
@@ -38,5 +37,4 @@ hooks_modules
 .pgdata
 
 # Terraform
-terraform*
-.terraform*
+iac/.terraform*
