@@ -24,7 +24,7 @@ def get_users() -> Page[UserRead]:
 
 
 @router.get(
-    "/{id}",
+    "/{user_id}",
     response_model=UserRead,
     status_code=status.HTTP_200_OK,
 )
@@ -51,7 +51,7 @@ def add_user(userData: UserCreate) -> UserCreate:
 
 
 @router.put(
-    "/{id}",
+    "/{user_id}",
     response_model=UserUpdate,
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_user)],
@@ -62,7 +62,7 @@ def update_user(user_id: str, userData: UserUpdate) -> UserUpdate:
 
 
 @router.delete(
-    "/{id}",
+    "/{user_id}",
     status_code=status.HTTP_200_OK,
     dependencies=[Depends(get_user)],
 )
