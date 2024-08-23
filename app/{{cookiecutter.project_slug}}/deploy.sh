@@ -31,6 +31,8 @@ source "$env_file"
 set +o allexport
 
 echo "
+Parsing $env_file 
+
 - Environment: $ENV
 - Project found: $GCLOUD_PROJECT_ID
 - Region: {{cookiecutter.gcloud_region}}

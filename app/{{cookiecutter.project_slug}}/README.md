@@ -112,7 +112,7 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 
 ## Deployment
 
-:warning: Everything under this section assumes **you specified a repository to push to**, and **choosed 'yes' to "as_container" question**.
+:warning: Everything under this section assumes you specified **a repository to push to**, a **gcloud project name**, and answered **'yes' to "as_container" question**.
 
 ### Initialisation
 
@@ -120,11 +120,12 @@ First, **make sure ADC is configured correctly.**
 
 Then, to start a first deployment:
 
-- [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
+- [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen;region={{cookiecutter.gcloud_region}}?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
 
 - Init required resources and start deployment:
 
 ```bash
+gcloud components update && gcloud components install beta
 ./deploy.sh -e <dev|staging|prod> # Will get the correct .env.x file & inject variables
 
 # Creates required resources & IAM permissions

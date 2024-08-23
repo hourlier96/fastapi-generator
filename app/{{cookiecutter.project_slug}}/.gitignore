@@ -24,7 +24,6 @@ cover/
 .env
 .venv
 venv/
-ENV/
 env.bak/
 venv.bak/
 
