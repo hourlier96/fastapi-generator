@@ -39,8 +39,8 @@
 
   ```sh
   # For migrations on Cloud SQL instance, ensure creating unix socket & starting Cloud SQL Proxy first
-  # sudo mkdir /cloudsql && sudo chmod 777 /cloudsql
-  # cloud-sql-proxy -u /cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
+  # sudo mkdir /var/cloudsql && sudo chmod 777 /var/cloudsql
+  # cloud-sql-proxy -u /var/cloudsql {{cookiecutter.gcloud_project}}:{{cookiecutter.gcloud_region}}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance
   ```
 
 ### Run locally
@@ -118,7 +118,7 @@ poetry run pytest --cov=app --cov-report=term     # Uses SQLALCHEMY_DATABASE_URI
 
 First, **make sure ADC is configured correctly.**
 
-Then, to start a first deployment:
+#### Start a first deployment
 
 - [Connect your repository to Cloud Build](https://console.cloud.google.com/cloud-build/repositories/1st-gen;region={{cookiecutter.gcloud_region}}?authuser=0&project={{cookiecutter.gcloud_project}}&supportedpurview=project)
 
@@ -147,6 +147,15 @@ gcloud components update && gcloud components install beta
 ```
 
 Cloud Build is now ready to auto deploy new Cloud Run revision after each push
+
+#### ...or re-deploy the app
+
+```bash
+./deploy.sh -e <dev|staging|prod> # Will get the correct .env.x file & inject variables
+
+# - Replaces secret version content if it differs from .env.x
+# - Runs the existing Cloud Build trigger
+```
 
 ## CI/CD
 

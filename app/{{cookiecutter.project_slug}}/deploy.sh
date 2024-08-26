@@ -46,6 +46,19 @@ if [[ "$confirm" =~ ^[Yy]$ ]]; then
   if gcloud beta builds triggers describe {{ cookiecutter.project_slug.replace('_', '-') }} \
       --project="$GCLOUD_PROJECT_ID" \
       --region="{{cookiecutter.gcloud_region}}" &>/dev/null; then
+      printf "Checking $env_file new content...\n"
+      # Check if env_file file is newer than secret manager content
+      LATEST_SECRET_CONTENT=$(gcloud secrets versions access latest --secret="{{ cookiecutter.project_slug.replace('_', '-') }}")
+      CURRENT_ENV_CONTENT=$(<$env_file)
+      if [ "$LATEST_SECRET_CONTENT" != "$CURRENT_ENV_CONTENT" ]; then
+        printf "New env content detected. Updating secret...\n"
+        for VERSION_ID in $(gcloud secrets versions list {{ cookiecutter.project_slug.replace('_', '-') }} --filter="state != disabled" --format="value(name)" --sort-by="~createTime"); do
+          gcloud secrets versions disable $VERSION_ID --secret="{{ cookiecutter.project_slug.replace('_', '-') }}"
+        done
+        gcloud secrets versions add {{ cookiecutter.project_slug.replace('_', '-') }} --data-file=$env_file
+      else
+        printf "$env_file content matches last secret version. Skipping env update...\n"
+      fi
       printf "INFO: Trigger found, deploying...\n"
       gcloud beta builds triggers run {{ cookiecutter.project_slug.replace('_', '-') }} \
         --project="$GCLOUD_PROJECT_ID" \

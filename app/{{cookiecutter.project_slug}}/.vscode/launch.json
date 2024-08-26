@@ -52,7 +52,7 @@
       "jinja": true,
       "justMyCode": true,
       "env": {
-        "SQLALCHEMY_DATABASE_URI": "postgresql+asyncpg://postgres:postgres@/{{cookiecutter.project_slug}}_db?host=/cloudsql/{{cookiecutter.gcloud_project}}:{{ cookiecutter.gcloud_region }}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance'"
+        "SQLALCHEMY_DATABASE_URI": "postgresql+asyncpg://postgres:postgres@/{{cookiecutter.project_slug}}_db?host=/var/cloudsql/{{cookiecutter.gcloud_project}}:{{ cookiecutter.gcloud_region }}:{{ cookiecutter.project_slug.replace('_', '-') }}-instance"
       }
     }
   ]
