@@ -28,11 +28,11 @@ resource "google_sql_database" "database" {
 }
 
 # Cloud SQL postgres user
-resource "google_sql_user" "updated_user" {
+resource "google_sql_user" "app_user" {
   count    = var.database_choosed.sql ? 1 : 0
-  name     = "postgres"
+  name     = "fastapi-template-user"
   instance = google_sql_database_instance.instance[0].name
-  password = "postgres"
+  password = "password"
 }
 
 # Firestore instance
