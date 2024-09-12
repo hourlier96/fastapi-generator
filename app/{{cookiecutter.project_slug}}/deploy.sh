@@ -126,6 +126,10 @@ if [[ "$confirm" =~ ^[Yy]$ ]]; then
       --member="$SERVICE_ACCOUNT_EMAIL" \
       --role="roles/serviceusage.serviceUsageAdmin" > /dev/null && echo "Role serviceusage.serviceUsageAdmin granted to $SERVICE_ACCOUNT_EMAIL"
 
+    gcloud projects add-iam-policy-binding $GCLOUD_PROJECT_ID \
+      --member="$SERVICE_ACCOUNT_EMAIL" \
+      --role roles/iam.serviceAccountUser > /dev/null && echo "Role iam.serviceAccountUser granted to $SERVICE_ACCOUNT_EMAIL"
+  
     # Create Cloud Build trigger (repository must be already connected)
     printf "\nINFO: Creating Cloud Build trigger...\n"
     gcloud beta builds triggers create github \
