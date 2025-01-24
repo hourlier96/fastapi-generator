@@ -1,0 +1,61 @@
+{
+  "name": "FastAPI Python 3.11",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/code",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.mouseWheelZoom": true,
+        "editor.inlineSuggest.enabled": true,
+        "explorer.confirmDelete": false,
+        "git.autofetch": true,
+        "git.autofetchPeriod": 120,
+        "git.detectSubmodules": false,
+        "git.path": "/usr/bin/git",
+        "python.pythonPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "[python]": {
+          "editor.formatOnType": true,
+          "editor.defaultFormatter": "ms-python.black-formatter"
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.shell.linux": "/bin/bash"
+      },
+      "extensions": [
+        "ms-vsliveshare.vsliveshare",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.isort",
+        "ms-python.black-formatter",
+        "ms-azuretools.vscode-docker",
+        "hashicorp.terraform",
+        "davidanson.vscode-markdownlint",
+        "redhat.vscode-yaml",
+        "mikestead.dotenv",
+        "tamasfe.even-better-toml",
+        "usernamehw.errorlens",
+        "tikou-web.gcp-switch-config"
+      ]
+    }
+  },
+  "remoteEnv": {
+    "GOOGLE_APPLICATION_CREDENTIALS": "/gcp/application_default_credentials.json",
+    "GCLOUD_PROJECT": "sandbox-ahourlier",
+    "WATCHFILES_FORCE_POLLING": "1",
+    "PYDEVD_DISABLE_FILE_VALIDATION": "1"
+  },
+  "portsAttributes": {
+    "8000": {
+      "label": "FastAPI",
+      "onAutoForward": "openBrowser"
+    },
+    "5678": {
+      "label": "Python Debugger"
+    }
+  },
+  "overrideCommand": false
+}
