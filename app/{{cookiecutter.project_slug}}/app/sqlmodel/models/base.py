@@ -8,6 +8,7 @@ from sqlalchemy import TIMESTAMP, text
 from sqlmodel import Field, SQLModel
 
 from app.models.base import to_camel
+from app.utils.date import formatAsDate
 
 T = TypeVar("T")
 
@@ -109,7 +110,22 @@ class QueryFilter(SQLModel):
         field, operator, value = values["field"], values.get("operator"), values.get("value")
         values["field"] = to_snake(field)
 
+        try:
+            if isinstance(value, str):
+                values["value"] = formatAsDate(value)
+        except ValueError:
+            pass
+
         if operator not in special_operators:
+            if value is None:
+                raise HTTPException(status_code=400, detail="Value is required for this operator.")
+
+            if not isinstance(values["value"], int | float | date | datetime):
+                if operator in comparison_operators:
+                    raise ValueError(
+                        f"Comparison operator requires type int, float, date or datetime: got {type(values['value'])}"
+                    )
+
             if operator in ["eq", "="]:
                 values["operator"] = "="
             elif operator in ["ne", "neq", "!="]:
@@ -130,12 +146,6 @@ class QueryFilter(SQLModel):
                     detail="Invalid operator",
                 )
 
-            if not value:
-                raise HTTPException(status_code=400, detail="Value is required for this operator.")
-
-            if not isinstance(value, int | date | datetime):
-                if operator in comparison_operators:
-                    raise ValueError("Some error")
         else:
             if operator in range_operators:
                 if not isinstance(value, list):

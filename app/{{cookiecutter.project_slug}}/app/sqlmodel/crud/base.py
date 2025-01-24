@@ -1,6 +1,6 @@
 from typing import Any, Generic, TypeVar
 
-from sqlalchemy import VARCHAR, Enum, asc, cast, desc, or_
+from sqlalchemy import VARCHAR, Enum, asc, cast, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import Select
 from sqlmodel import SQLModel, select
@@ -105,7 +105,8 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
             except AttributeError:
                 pass
 
-        total = len((await db.scalars(statement)).all())
+        count_stmt = select(func.count()).select_from(statement.subquery())
+        total = await db.scalar(count_stmt)
 
         # Apply pagination
         if per_page > 0:
@@ -113,6 +114,7 @@ class CRUDBase(Generic[ModelType, CreateModelType, UpdateModelType]):
         statement = statement.offset((page - 1) * per_page)
 
         items = (await db.scalars(statement)).all()
+
         return Page(items=items, total=total)
 
     def update_query_with_filters_(

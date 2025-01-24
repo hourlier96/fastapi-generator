@@ -137,4 +137,5 @@ def downgrade():
     op.drop_table("usertodo")
     op.drop_table("user")
     op.drop_table("todo")
+    op.execute("DROP TYPE todopriority")
     # ### end Alembic commands ###

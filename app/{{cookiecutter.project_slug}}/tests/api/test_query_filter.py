@@ -61,6 +61,9 @@ async def test_query_filter_users(client: AsyncClient, db: AsyncSession) -> None
     assert data.get("total") == 1
     data = await call_from_operator(client, query_params, "login_times", "ge", 135)
     assert data.get("total") == 1
+    # Test date comparison
+    data = await call_from_operator(client, query_params, "created_at", ">", "2022-01-01")
+    assert data.get("total") == 3
     # Test range operators
     data = await call_from_operator(client, query_params, "login_times", "in", [1, 5, 10, 100])
     assert data.get("total") == 1
